@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+    {% if expenses is none %}
+        <!-- WELCOME SCREEN -->
+        <div class="text-center py-5">
+            <div style="font-size: 6rem; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; line-height: 1;">💰</div>
+            <h1 class="fw-bold mt-4 mb-3" style="font-size: 2.75rem; letter-spacing: -1.5px;">Welcome to Expense Tracker</h1>
+            <p class="lead text-muted mb-5" style="max-width: 500px; margin: 0 auto;">
+                Take control of your money. Track every expense, spot patterns, and save more.
+            </p>
+            <a href="{{ url_for('register') }}" class="btn btn-success btn-lg me-2">
+                <i class="fas fa-rocket me-2"></i> Get Started
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i> Login
+            </a>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="row g-4 mt-5">
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div style="height: 5px; background: linear-gradient(90deg, #8b5cf6, #6366f1);"></div>
+                    <div class="card-body p-4">
+                        <div style="font-size: 3.5rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📊</div>
+                        <h5 class="card-title mt-3 fw-bold">Track Everything</h5>
+                        <p class="card-text text-muted small mb-0">Log expenses in seconds with categories and dates</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div style="height: 5px; background: linear-gradient(90deg, #06b6d4, #10b981);"></div>
+                    <div class="card-body p-4">
+                        <div style="font-size: 3.5rem; background: linear-gradient(135deg, #06b6d4, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📈</div>
+                        <h5 class="card-title mt-3 fw-bold">Visualize</h5>
+                        <p class="card-text text-muted small mb-0">Beautiful charts reveal where your money really goes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center">
+                    <div style="height: 5px; background: linear-gradient(90deg, #f59e0b, #ef4444);"></div>
+                    <div class="card-body p-4">
+                        <div style="font-size: 3.5rem; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">💎</div>
+                        <h5 class="card-title mt-3 fw-bold">Save Smarter</h5>
+                        <p class="card-text text-muted small mb-0">Understand habits and keep more money in your pocket</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- DASHBOARD -->
+        <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+            <div>
+                <h2 class="mb-1" style="font-size: 1.85rem;"><i class="fas fa-chart-line text-success me-2"></i>Dashboard</h2>
+                <small class="text-muted" style="font-size: 0.95rem;">Your spending at a glance</small>
+            </div>
+            <a href="{{ url_for('new_expense') }}" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i> New Expense
+            </a>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card h-100 border-0" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); color: white; overflow: hidden; position: relative;">
+                    <div style="position: absolute; top: -30px; right: -30px; font-size: 8rem; opacity: 0.1;">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="card-body p-4" style="position: relative; z-index: 2;">
+                        <p class="mb-2 text-white-50 text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 1px;">This Month</p>
+                        <h2 class="mb-1 fw-bold" style="font-size: 2.25rem; letter-spacing: -1px;">${{ "%.2f"|format(month_total) }}</h2>
+                        <small class="text-white-50"><i class="fas fa-arrow-up me-1"></i>Spent in {{ now.strftime('%B') if now else 'this month' }}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0" style="background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%); color: white; overflow: hidden; position: relative;">
+                    <div style="position: absolute; top: -30px; right: -30px; font-size: 8rem; opacity: 0.1;">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="card-body p-4" style="position: relative; z-index: 2;">
+                        <p class="mb-2 text-white-50 text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 1px;">Expenses</p>
+                        <h2 class="mb-1 fw-bold" style="font-size: 2.25rem; letter-spacing: -1px;">{{ month_count }}</h2>
+                        <small class="text-white-50"><i class="fas fa-list me-1"></i>Transactions this month</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: white; overflow: hidden; position: relative;">
+                    <div style="position: absolute; top: -30px; right: -30px; font-size: 8rem; opacity: 0.1;">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="card-body p-4" style="position: relative; z-index: 2;">
+                        <p class="mb-2 text-white-50 text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 1px;">All-Time</p>
+                        <h2 class="mb-1 fw-bold" style="font-size: 2.25rem; letter-spacing: -1px;">${{ "%.2f"|format(all_time_total) }}</h2>
+                        <small class="text-white-50"><i class="fas fa-infinity me-1"></i>Total ever spent</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHART + RECENT -->
+        <div class="row g-4">
+            <!-- Pie Chart -->
+            <div class="col-lg-5">
+                <div class="card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-chart-pie text-success me-2"></i>By Category</h5>
+                        <small class="text-muted">This month</small>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if categories %}
+                            <div style="position: relative; height: 320px;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5 text-muted">
+                                <div style="font-size: 4rem; opacity: 0.4;">📊</div>
+                                <p class="mt-3 mb-3">No expenses this month yet.</p>
+                                <a href="{{ url_for('new_expense') }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-plus me-1"></i> Add Your First
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Expenses -->
+            <div class="col-lg-7">
+                <div class="card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-clock text-primary me-2"></i>Recent Expenses</h5>
+                        <a href="{{ url_for('all_expenses') }}" class="btn btn-sm btn-outline-primary">
+                            View All <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if expenses %}
+                            <div class="list-group list-group-flush">
+                                {% for expense in expenses %}
+                                    <div class="list-group-item px-0 py-3 border-0 border-bottom d-flex justify-content-between align-items-center" style="transition: all 0.3s;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                 style="width: 45px; height: 45px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: #4338ca; font-size: 1.2rem; flex-shrink: 0;">
+                                                <i class="fas fa-{% if expense.category == 'Food' %}utensils{% elif expense.category == 'Transport' %}car{% elif expense.category == 'Bills' %}file-invoice-dollar{% elif expense.category == 'Shopping' %}shopping-bag{% elif expense.category == 'Entertainment' %}film{% elif expense.category == 'Health' %}heart-pulse{% elif expense.category == 'Education' %}book{% else %}receipt{% endif %}"></i>
+                                            </div>
+                                            <div>
+                                                <strong style="font-size: 1rem;">{{ expense.category }}</strong>
+                                                {% if expense.description %}
+                                                    <br><small class="text-muted">{{ expense.description }}</small>
+                                                {% endif %}
+                                                <br><small class="text-muted" style="font-size: 0.78rem;">
+                                                    <i class="far fa-calendar me-1"></i>{{ expense.date.strftime('%b %d, %Y') }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <h6 class="mb-2 fw-bold text-danger" style="font-size: 1.15rem;">-${{ "%.2f"|format(expense.amount) }}</h6>
+                                            <div class="d-flex gap-1">
+                                                <a href="{{ url_for('edit_expense', expense_id=expense.id) }}" 
+                                                   class="btn btn-sm" 
+                                                   style="background: #fef3c7; color: #b45309; padding: 4px 10px;">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form method="POST" action="{{ url_for('delete_expense', expense_id=expense.id) }}" style="display: inline;">
+                                                    <button type="submit" 
+                                                            class="btn btn-sm" 
+                                                            style="background: #fee2e2; color: #991b1b; padding: 4px 10px;"
+                                                            onclick="return confirm('Delete this expense?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5 text-muted">
+                                <div style="font-size: 4rem; opacity: 0.4;">📭</div>
+                                <p class="mt-3 mb-3">No expenses yet.</p>
+                                <a href="{{ url_for('new_expense') }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-plus me-1"></i> Add Your First Expense
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if expenses and categories %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const categories = {{ categories | tojson }};
+    const amounts = {{ amounts | tojson }};
+
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: amounts,
+                backgroundColor: [
+                    '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b',
+                    '#ef4444', '#ec4899', '#6366f1', '#84cc16',
+                    '#f97316', '#14b8a6'
+                ],
+                borderWidth: 4,
+                borderColor: '#ffffff',
+                hoverOffset: 12,
+                hoverBorderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1200,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        color: '#64748b'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    padding: 14,
+                    cornerRadius: 12,
+                    titleFont: { family: 'Plus Jakarta Sans', size: 13, weight: '700' },
+                    bodyFont: { family: 'Plus Jakarta Sans', size: 13 },
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percent = ((context.parsed / total) * 100).toFixed(1);
+                            return ' $' + context.parsed.toFixed(2) + ' (' + percent + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}
