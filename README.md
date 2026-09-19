@@ -40,5 +40,5 @@ A beautiful, modern expense tracking application built with Flask. Track your sp
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com//expense_tracker.git
+   git clone https://github.com/guyodika6891-lgtm/expense_tracker/expense_tracker.git
    cd expense_tracker
