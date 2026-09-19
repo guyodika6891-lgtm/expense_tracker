@@ -26,7 +26,7 @@ A beautiful, modern expense tracking application built with Flask. Track your sp
 
 ## 🚀 Live Demo
 
-🔗 [View Live App](https://expense-tracker.onrender.com) *(update after deployment)*
+🔗 [View Live App](https://expense-tracker-4omg.onrender.com) *(update after deployment)*
 
 ## 🏁 Getting Started
 
